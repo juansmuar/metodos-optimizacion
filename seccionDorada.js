@@ -1,44 +1,36 @@
 function seccionDorada(f, xl, xu, tol, resultadoDiv) {
-    const phi = (1 + Math.sqrt(5)) / 2;
     let iteraciones = 0;
     let errores = [];
+    let phi = 0.618033;
+    let d = phi * (xu - xl);
+    let x1 = xl + d;
+    let x2 = xl - d;
 
-    let d = (xu - xl) / phi;
-    let x1 = xu - d;
-    let x2 = xl + d;
-    let f1 = f(x1);
-    let f2 = f(x2);
-    let xr, error;
+    let error;
 
-    let tablaHTML = `<table border='1'><tr><th>Iteración</th><th>xl</th><th>xu</th><th>xr</th><th>Error</th></tr>`;
+    let tablaHTML = `<table border='1'><tr><th>Iteración</th><th>xl</th><th>xu</th><th>x1</th><th>x2</th><th>d</th><th>Error</th></tr>`;
 
-    while (Math.abs(xu - xl) > tol) {
-        if (f1 < f2) {
-            xu = x2;
-            x2 = x1;
-            f2 = f1;
-            d = (xu - xl) / phi;
-            x1 = xu - d;
-            f1 = f(x1);
+    while (Math.abs(x1 - x2) > tol) {
+
+        if (f(x2) > f(x1)) {
+            xu = x1
         } else {
-            xl = x1;
-            x1 = x2;
-            f1 = f2;
-            d = (xu - xl) / phi;
-            x2 = xl + d;
-            f2 = f(x2);
+            xl = x2;
         }
 
-        xr = (xl + xu) / 2;
-        error = Math.abs(xu - xl);
+        d = phi * (xu - xl)
+        x1 = xl + d;
+        x2 = xl - d;
+
+        error = Math.abs(x1 - x2);
         errores.push(error);
 
-        tablaHTML += `<tr><td>${iteraciones}</td><td>${xl}</td><td>${xu}</td><td>${xr}</td><td>${error ?? "-"}</td></tr>`;
+        tablaHTML += `<tr><td>${iteraciones}</td><td>${xl}</td><td>${xu}</td><td>${x1}</td><td>${x2}</td><td>${d}</td><td>${error ?? "-"}</td></tr>`;
 
         iteraciones++;
     }
 
     tablaHTML += `</table>`;
     resultadoDiv.innerHTML += tablaHTML;
-    return { raiz: xr, iteraciones, errores };
+    return {iteraciones, errores };
 }
